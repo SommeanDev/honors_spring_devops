@@ -1,22 +1,35 @@
 package com.example.honors_spring_devops;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.honors_spring_devops.dto.UserInfo;
+import com.example.honors_spring_devops.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    @GetMapping("/")
-    List<String> getAllUsers(){
-        return List.of("user1", "user2");
+    @Autowired
+    UserService userService;
+
+    @GetMapping()
+    List<UserInfo> getAllUsers(){
+        return userService.getAllUsers();
     }
 
     @PostMapping()
-    void CreateUser() {
-        System.out.println("User Created");
+    UserInfo CreateUser(@RequestBody UserInfo userInfo) {
+        return userService.createUser(userInfo);
+    }
+
+    @GetMapping("/{id}")
+    ResponseEntity<UserInfo> getUserById(@PathVariable String id) {
+        try {
+            return ResponseEntity.ok().body(userService.getUser(id));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
